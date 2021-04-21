@@ -1,0 +1,14 @@
+.class{
+    background-color: #eee;
+    height: 625px;
+}
+.container{
+    margin-top: 100px;
+}
+.input{
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+.button{
+    margin-top: 50px;
+}
