@@ -16,7 +16,7 @@ export default function SearchAppBar() {
 
             <ul className="leftMenu">
                 <li><NavLink to={'/login'} > login</NavLink></li>
-                <li className="test"><NavLink to={'/home'} >SignIn </NavLink></li>
+                <li className="test"><NavLink to={'/Signin'} >SignIn </NavLink></li>
             </ul> 
         </div>
         </header>

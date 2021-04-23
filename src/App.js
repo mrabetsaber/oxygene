@@ -1,9 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
 import FirstPage from './Containers/FirstPage';
 import LoginPage from './Containers/LoginPage';
-import HomePage from './Containers/HomePage'
+import SigninPage from './Containers/SigninPage'
 import {BrowserRouter as Router, Route } from 'react-router-dom';
+import Home from './Containers/Home'
 
 
 function App() {
@@ -11,9 +11,10 @@ function App() {
     <div className="App">
       
     <Router>
-    <Route path="/"exact component={FirstPage} />
+    <Route path="/home" component={FirstPage} />
     <Route path="/login" component={LoginPage} />
-    <Route path="/home" component={HomePage} />
+    <Route path="/Signin" component={SigninPage} />
+    <Route path="/" exact component={Home} />
     </Router>
       
     </div>
