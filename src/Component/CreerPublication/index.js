@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
       },
       icon1:{
-          marginLeft:theme.spacing(10)
+          marginLeft:theme.spacing(10),
+          
       },
       publier:{
         height:300,
@@ -86,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
     }));
 function Index() {
     const classes=useStyles();
-    const [visabal,setvisabal]=useState(true);
+    const [visabal,setvisabal]=useState(false);
     const handleVisbalClick = ()=>{
       
         setvisabal(!visabal);
@@ -142,18 +143,23 @@ function Index() {
                         
                     />
                 </div>
+                <label for="img" className={classes.icon1}>
                 
-                <IconButton size="small" className={classes.icon} >
-                    <PhotoLibraryIcon color="primary"/>
+                    <PhotoLibraryIcon  color="primary"/>
                     Picture
-                </IconButton>
-                <IconButton size="small" className={classes.icon1}>
-                    <YouTubeIcon color="secondary"/>
-                    Video
-                </IconButton>
-                
+                    
+                    <input type="file" id="img" hidden />
+         
+                </label>
+                    <label for="video" className={classes.icon1}>
+                        <YouTubeIcon color="secondary"/>
+                            Video
+                            
+                        <input type="file" id="video" hidden />
+                    </label>                
             </Paper>
-        </div>
+            
+          </div>
     )
 }
 

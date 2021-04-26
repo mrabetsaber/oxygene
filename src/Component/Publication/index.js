@@ -15,7 +15,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import CommentIcon from '@material-ui/icons/Comment';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
-
+import Commentaire from '../Commentaire'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     padding:'30px 30px',
     maxWidth: 600,
     marginLeft:'30%',
+    marginBottom:20
     
     
   },
@@ -53,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RecipeReviewCard() {
+ function RecipeReviewCard(props) {
+   const data = props.data
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [commentaire,setCommentaire]=useState('')
@@ -71,11 +73,11 @@ export default function RecipeReviewCard() {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-            R
+            {data[0][0]}
           </Avatar>
         }
         
-        title="Shrimp and Chorizo Paella"
+        title={data[0]}
         subheader="September 14, 2016"
       />
       <CardMedia
@@ -114,25 +116,24 @@ export default function RecipeReviewCard() {
           
       
           
-        <Paper component="form" onSubmit={comment} className={classes.root1}>
-     
-        <Avatar aria-label="recipe" className={classes.avatar}>
-            R
-          </Avatar>
+          <Paper component="form" onSubmit={comment} className={classes.root1}>
       
-      <InputBase
-        className={classes.input}
-        placeholder="Comment..."
-        onChange={(e)=>{setCommentaire(e.target.value)}}
-        value={commentaire}
-        autoFocus="true"
-      />
-      
-      
-      
-    </Paper>
+            <Avatar aria-label="recipe" className={classes.avatar}>
+                R
+            </Avatar>
+          
+            <InputBase
+              className={classes.input}
+              placeholder="Comment..."
+              onChange={(e)=>{setCommentaire(e.target.value)}}
+              value={commentaire}
+              autoFocus={true}
+            />
+          </Paper>
+         <Commentaire reply={<Commentaire/>} comment={data[2]}></Commentaire>
         </CardContent>
       </Collapse>
     </Card>
   );
 }
+export default RecipeReviewCard;
