@@ -4,6 +4,7 @@ import LoginPage from './Containers/LoginPage';
 import SigninPage from './Containers/SigninPage'
 import {BrowserRouter as Router, Route } from 'react-router-dom';
 import Home from './Containers/Home'
+import Messages from './Containers/Messages'
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
     <Route path="/login" component={LoginPage} />
     <Route path="/Signin" component={SigninPage} />
     <Route path="/" exact component={Home} />
+    <Route path="/Messages" component={Messages}/>
     </Router>
       
     </div>

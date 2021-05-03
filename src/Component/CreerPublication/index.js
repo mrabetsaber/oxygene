@@ -2,7 +2,7 @@ import React,{useState} from 'react'
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import Avatar from '@material-ui/core/Avatar';
-import { Collapse, IconButton, makeStyles } from '@material-ui/core';
+import { Collapse, Hidden, IconButton, makeStyles } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import YouTubeIcon from '@material-ui/icons/YouTube';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
         width: 640,
         marginLeft:'30%',
         marginTop:40,
-        marginBottom:20,
+        marginBottom:0,
         flexGrow:1,
       },
       closeIco:{
@@ -84,31 +84,69 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: red[500],
         marginLeft:theme.spacing(6)
       },
+
+      media:{
+          
+         textAlign:'center',
+         marginBottom:0
+      }
+
+
+
+
+
     }));
 function Index() {
     const classes=useStyles();
-    const [visabal,setvisabal]=useState(false);
+    const [visabal,setvisabal]=useState(true);
+    const [video,setVideo]=useState('');
+    const [image,setImg]=useState('');
+    let imghid=true;
+    let vidhid=true;
     const handleVisbalClick = ()=>{
-      
+     
         setvisabal(!visabal);
+        if(visabal){
+            setImg('');
+            setVideo('');
+        }
+        console.log(image);
       
     }
+    const handelImg=(img)=>{
+        imghid=false
+        img=URL.createObjectURL(img)
+        setImg(img);
+        setVideo('');
+        
+    }
+    const handelvideo=(vid)=>{
+        vid=URL.createObjectURL(vid)
+        setImg('');
+        setVideo(vid);
+    }
+    
     return (
-        <div>
+        <div >
           
-            <Collapse  in={visabal}>
+            <Collapse  in={visabal} >
             <Paper  className={classes.publier}  elevation={3}>
 
-                <div className={classes.header}>
+                <div className={classes.header} ref={React.createRef()}>
                     <h3>Creer un publication </h3>
                 <IconButton className={classes.closeIco} onClick={handleVisbalClick}>
                 <CloseIcon/>
                 </IconButton>
                 </div>
-                <div >
+                
                 <Avatar aria-label="recipe" className={classes.avatarP}>
                             R
                     </Avatar>
+                    <div className={classes.media}>
+                    <img height="200"  src="/images/firstPageImg.jpg" alt="" />
+                    <video src={video} className={classes.video}></video>
+                    </div>
+                    
                     <InputBase
                         className={classes.PublicationInput}
                         placeholder="Que Voulez-vous dire "
@@ -116,15 +154,25 @@ function Index() {
                         rowsMax={6}
                         
                     />
-                    </div>
-                    <IconButton size="small" className={classes.icon} >
-                    <PhotoLibraryIcon color="primary"/>
+                    
+                    <label htmlFor="img1" className={classes.icon1}>
+                
+                    <PhotoLibraryIcon  color="primary"/>
                     Picture
-                </IconButton>
-                <IconButton size="small" className={classes.icon1}>
-                    <YouTubeIcon color="secondary"/>
-                    Video
-                </IconButton>
+                    
+                    <input type="file" id="img1" hidden
+                     onChange={(e)=>{handelImg( e.target.files[0]); } }
+                     />
+         
+                </label>
+                
+                    <label htmlFor="video1" className={classes.icon1}>
+                        <YouTubeIcon color="secondary"/>
+                            Video
+                           
+                        <input type="file" id="video1" hidden
+                         onChange={(e)=>{handelvideo((e.target.files[0]));}} />
+                    </label>                
 
             </Paper>
             </Collapse>
@@ -143,19 +191,22 @@ function Index() {
                         
                     />
                 </div>
-                <label for="img" className={classes.icon1}>
+                <label htmlFor="img" className={classes.icon1}>
                 
                     <PhotoLibraryIcon  color="primary"/>
                     Picture
                     
-                    <input type="file" id="img" hidden />
+                    <input type="file" id="img" hidden
+                     onChange={(e)=>{handelImg( e.target.files[0]);handleVisbalClick() } }
+                     />
          
                 </label>
-                    <label for="video" className={classes.icon1}>
+                    <label htmlFor="video" className={classes.icon1}>
                         <YouTubeIcon color="secondary"/>
                             Video
-                            
-                        <input type="file" id="video" hidden />
+                           
+                        <input type="file" id="video" hidden
+                         onChange={(e)=>{handelvideo((e.target.files[0]));handleVisbalClick()}} />
                     </label>                
             </Paper>
             

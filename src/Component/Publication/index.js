@@ -69,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
   }
 
   return (
+    <div ref={React.createRef()}>
     <Card className={classes.root}>
       <CardHeader
         avatar={
@@ -134,6 +135,7 @@ const useStyles = makeStyles((theme) => ({
         </CardContent>
       </Collapse>
     </Card>
+    </div>
   );
 }
 export default RecipeReviewCard;

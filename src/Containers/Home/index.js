@@ -8,11 +8,12 @@ function index() {
     const data=[{firstName:'saber',lastName:"mrabet",comment:[{firstName:'saber',lastName:"mrabet",detail:"Aliquip consequat eu voluptate nostrud ex adipisicing aute cillum reprehenderit incididunt dolore id qui. Exercitation magna dolor elit occaecat duis aute exercitation sint non. Laboris fugiat mollit sit ad labore anim aute ad. Culpa fugiat consequat irure ex excepteur ipsum ullamco."}]},{firstName:'hiba'}]
   
     return (
-        <div className="root" >
+        <div className="root"  >
             
             <Navbar/>
             <CreatePublication/>
            {
+               
                data.map((number,index)=>{return<Publication key={index} data={[number.firstName,number.lastName,number.comment]} />})
            }
 
