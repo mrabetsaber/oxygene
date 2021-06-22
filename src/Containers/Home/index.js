@@ -1,25 +1,38 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Navbar from '../../Component/Navbar';
 import Publication from '../../Component/Publication';
 import CreatePublication from '../../Component/CreerPublication';
 import './style.css'
+import { useSelector, useDispatch } from 'react-redux'
 
-function index() {
-    const data=[{firstName:'saber',lastName:"mrabet",comment:[{firstName:'saber',lastName:"mrabet",detail:"Aliquip consequat eu voluptate nostrud ex adipisicing aute cillum reprehenderit incididunt dolore id qui. Exercitation magna dolor elit occaecat duis aute exercitation sint non. Laboris fugiat mollit sit ad labore anim aute ad. Culpa fugiat consequat irure ex excepteur ipsum ullamco."}]},{firstName:'hiba'}]
+import { getPublication} from '../../Actions/user.action';
+
+function Index() {
+    const auth =useSelector(state=>state.auth);
+    const dispatch = useDispatch()
+    
+   const publication= useSelector(state=>state.user.publication);
+
+   const [open, setOpen] = React.useState(false);
+   
   
     return (
         <div className="root"  >
-            
+             
+                
+                
             <Navbar/>
-            <CreatePublication/>
-           {
+            
+            <CreatePublication  />
+            {
                
-               data.map((number,index)=>{return<Publication key={index} data={[number.firstName,number.lastName,number.comment]} />})
-           }
+              publication? publication.map((number,index)=>{return<Publication key={index} data={[number.name,number.text,number.createdAt,number.url]} userId={number.userId} onUpdate={(value)=>{setOpen(value);console.log('open',open);}} id={number.id} />})
+          :null }
+
 
             
         </div>
     )
 }
 
-export default index
+export default Index

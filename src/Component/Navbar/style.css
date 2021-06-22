@@ -17,10 +17,24 @@
     
 
 }
+.leftmenu{
+    display: flex; 
+    color: #fff; 
+    
+    
+
+}
+
 
 .leftMenu > li{
     margin: 0 10px;
     list-style: none;
+    
+}
+.leftmenu > li{
+    margin: 0 10px;
+    list-style: none;
+    text-decoration: none;
     
 }
 
@@ -30,5 +44,8 @@
 }
 
 .leftMenu > li > a.active{
+    font-weight: bold;
+}
+.leftmenu > li > a.active{
     font-weight: bold;
 }

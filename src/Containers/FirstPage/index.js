@@ -11,7 +11,7 @@ function FirstPage() {
             
             <p className="title">Free your Lungs</p>
             <p className="Subtitle">the best way to stop <br/> smoking </p>
-            <NavLink to="/home"><div className="join" >join us</div></NavLink>  
+            <NavLink to="/signin"><div className="join" >join us</div></NavLink>  
             <img className="img" src="images/firstPageImg.jpg" alt="" />
             
             

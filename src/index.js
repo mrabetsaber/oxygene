@@ -2,12 +2,27 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+
+import firebase from 'firebase'
+import{Provider} from 'react-redux'
+import store from './Store'
 import reportWebVitals from './reportWebVitals';
 
+// Your web app's Firebase configuration
+
+
+
+window.store=store
+
+
+
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    
+      <App />
+    
+  </Provider>,
   document.getElementById('root')
 );
 

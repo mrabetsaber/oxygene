@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -11,7 +11,29 @@ import Avatar from '@material-ui/core/Avatar';
 import { red } from '@material-ui/core/colors';
 import SendIcon from '@material-ui/icons/Send';
 import ImageIcon from '@material-ui/icons/Image';
-import clsx from 'clsx'
+import clsx from 'clsx';
+import { useSelector, useDispatch } from 'react-redux'
+
+import { getRealtimeuser,updateMessage,  getRealTimeConversation, addMessage } from '../../Actions';
+
+const User =(props)=>{
+  const {user,onClick}=props
+  const classes=useStyles()
+  
+  return(
+    <Button onClick={()=>onClick(user)} className={classes.person}>
+        <Avatar aria-label="recipe" >
+                {user?user.firstName[0]:null}
+            </Avatar>
+           <p> {user?user.firstName:null }  {user?user.lastName:null}</p>
+            <br/>
+    </Button>
+ 
+    
+  )
+}
+
+
 
 const useStyles = makeStyles((theme) => ({
  root: {
@@ -87,27 +109,26 @@ const useStyles = makeStyles((theme) => ({
   },
   myMessage:{
     float:'right',
-    backgroundColor:"#eee",
-    marginBottom:10,
+    
+    
     borderRadius:40,
-    padding:10,
+    marginBottom:-15,
     width:200,
     marginLeft:100
   },
   message:{
     float:'left',
-    backgroundColor:"#eee",
-    marginBottom:10,
-    borderRadius:40,
+   
+    
+    
     padding:10,
     width:200,
     marginRight:100,
   },
   messageRoot:{
-    float:'left',
-    marginLeft:30,
+   
     overflow:"auto",
-
+    height: 340,
   },
   connected:{
     borderRadius:50,
@@ -130,113 +151,154 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CustomizedInputBase() {
+  const [messsage , setMessage]=useState('')
   const classes = useStyles();
   const [name,setname]=useState('');
-  const id="wassim";
+  
   const [clicked,setEnterMessage]=useState(true)
+  const auth =useSelector(state=>state.auth);
+  const user =useSelector(state=>state.user)
   
-  
-  
-  const dat=[
-      {firstName:'saber'
-      ,lastName:"mrabet",
-      connected:false
-      
-      },
-      {firstName:'hiba',
-      connected:true
-    },
-      {firstName:'hiba',
-      connected:true
-    },
+  const [chatStarted, setChatStarted] = useState(false);
+  const [chatUser, setChatUser] = useState('');
+  const [userUid,setUserUid]=useState(null);
+  const [search,setSearch]=useState('')
+  let unsubscribe;
+    const dispatch = useDispatch()
+    useEffect(()=>{ 
+      unsubscribe= dispatch(getRealtimeuser(auth.uid))
+       .then(unsubscribe => {
+         return unsubscribe
+         
+       })
+       .catch(error=>{
+         console.log(error);
+         
+       })
+
+       
+       
+       
+    
+     },[])
+    const initChat=(user)=>{
+      setEnterMessage();
+      setname(user.firstName)
+  setChatStarted(true)
+ 
+  setUserUid(user.uid)
+    
+  console.log(user);
+  dispatch(getRealTimeConversation({uid_1:auth.uid,uid_2:user.uid}) )
 
 
-    ];
-    const messages=[
-      {id:"saber",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.Ullamco fugiat ad aliqua aliquip ipsum. Qui quis esse consectetur cupidatat deserunt eu dolor tempor. Culpa voluptate Lorem pariatur sint esse velit exercitation velit exercitation eiusmod. Adipisicing officia ullamco cillum cupidatat tempor. Ex reprehenderit dolor reprehenderit cupidatat sit cillum aliqua ad. Id aliqua laborum aliquip cupidatat esse ullamco exercitation magna Lorem labore.",
-       time:"15:22",
-       to:"wassim" 
-    },
-      {id:"wassim",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.",
-       time:"15:22",
-       to:"saber" 
-    },
-      {id:"hiba",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.",
-       time:"15:22",
-       to:"wassim" 
-    },
-      {id:"wassim",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.",
-       time:"15:22",
-       to:"hiba" 
-    },
-      {id:"saber",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.",
-       time:"15:22",
-       to:"hiba" 
-    },
-      {id:"hiba",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.",
-       time:"15:22",
-       to:"saber" 
-    },
-      {id:"wassim",
-       message:"Id non proident amet commodo eiusmod reprehenderit culpa non.",
-       time:"15:22",
-       to:"saber" 
-    },
-  ]
+
+  }
+  
+  const submitMessage=(e)=>{
+    e.preventDefault()
+    const msgobj={
+      user_uid_1:auth.uid,
+      user_uid_2:userUid,
+      messsage
+    }
+    if(messsage!== ''){
+      dispatch(updateMessage(msgobj))
+      .then(()=>{
+        setMessage('')
+      })
+    }
+
+    console.log(msgobj)
+    
+    
+  }
+  
+  const users=user.users
+  
+  const[Susers,setSusers]=React.useState(null)
+  
+  const filter=(e)=>{
+     
+      setSusers(users.map(user=>{
+        if(user.firstName.includes(e.target.value))
+          return user
+        
+        
+      }))
+     
+  }
+        
 
 
   return (
   <div>
+    
       <Navbar></Navbar>
     <div className={classes.root}>
 
         <Paper className={classes.paperRoot}>
               <h1>chats</h1>
               <Divider className={classes.divider} orientation="horizontal"  />
-                  <Paper component="form" className={classes.searchRoot}>
+                  <Paper component="form" onSubmit={e=>e.preventDefault()} className={classes.searchRoot}>
                   <IconButton type="submit" className={classes.iconButton} aria-label="search">
                       <SearchIcon />
                   </IconButton>
                   
                   <InputBase
-                      className={classes.input}
-                      placeholder="Search Google Maps"
-                      inputProps={{ 'aria-label': 'search google maps' }}
-                  />
                   
+                      onChange={(e)=>{setSearch(e.target.value) ;filter(e)}}
+                    
+                      className={classes.input}
+                      placeholder=""
+                      inputProps={{ 'aria-label': 'search google maps' }}
+                      value={search}
+                     
+                  />
+                   
                   
                   </Paper>
               
-          {
-              
-              dat.map((data,index)=>{
-                return <div key={index} className={classes.person} >
-                          
-                          <Button className={classes.Button} onClick={()=>{setEnterMessage();setname(data.firstName)}}>
-                          <Avatar aria-label="recipe" className={classes.avatar}>
-                            {data.firstName[0]}
-                          </Avatar>
-                          <p>{data.firstName}</p>
-                            <div className={clsx(null,{[classes.connected]:data.connected})} ></div>
+                  <div className="listOfUsers">
+<div className={classes.messageRoot}>
+  {
 
-                          </Button>
-                          
-                        </div>
-            
-              })
-          }
+Susers?Susers.map((user,index)=>{
+  return(
+    user?
+   <User key={index} user={user} onClick={initChat} />:null
+  )
+}):users.map((user,index)=>{
+  return(
+    user?
+   <User key={index} user={user} onClick={initChat} />:null
+  )
+})
+
+
+
+/** 
+  user.users.length > 0? 
+  user.users.map((user)=>{
+    return(
+   
+      <User
+      onClick={initChat}
+      key={user.uid} user={user}> </User>
+  )}):null
+    */}</div>
+
+
+  
+          
+          
+</div>
          
           </Paper>
 
 
 
-          <Paper className={classes.paperRoot}>
+          <Paper  className={classes.paperRoot}>
             
             {clicked?<div className={classes.send}>
 
@@ -257,24 +319,24 @@ export default function CustomizedInputBase() {
               <Divider className={classes.divider} orientation="horizontal"  />
             </div>}
             <div className={classes.messagesRoot}>
+              
               {
-                messages.map((data,index)=>{
-                  if(id==data.id&&data.to==name){
+                
+                 user.conversations.map((data,index)=>{
+                   
+                  if(userUid==data.user_uid_2&&data.user_uid_1==auth.uid){
                       
 
-                    return <div key={index} className={classes.myMessage}>
+                    return <p className={classes.myMessage} style={{ backgroundColor:"#eee",borderRadius:40,}}>{data.messsage}</p>
                     
-                      <p>{data.message}</p>
-                      <br/>
-                    </div>
                     }
-                  else if(data.id==name&&data.to==id){
-                    return<div key={index} className={classes.messageRoot}>
+                  else if(data.user_uid_2==auth.uid&&data.user_uid_1==userUid){
+                    return<div key={index}className={classes.message} >
                             <Avatar aria-label="recipe" className={classes.avatar}>
                               {name[0]}
                             </Avatar>
-                            <p className={classes.message}>{data.message}</p>
-                            <br/>
+                            <p style={{ backgroundColor:"#eee",borderRadius:40,}} >{data.messsage}</p>
+                            
                           </div>
                   }
             
@@ -284,21 +346,21 @@ export default function CustomizedInputBase() {
             </div>
             
             {clicked?null:
-            <Paper  className={classes.messagesInput} elevation={3} >
+            <Paper component='form'  onSubmit={(e)=> submitMessage(e)} className={classes.messagesInput} elevation={3} >
         
               <InputBase
+              onChange={(e)=>setMessage(e.target.value)}
               className={classes.input}
-              placeholder="Search Google Maps"    
+              
               inputProps={{ 'aria-label': 'search google maps' }}
+              value={messsage}
               />
             
               <Divider className={classes.divider} orientation="vertical" />
-              <IconButton  className={classes.iconButton} aria-label="directions">
+              <IconButton onClick={submitMessage} className={classes.iconButton} aria-label="directions">
               <SendIcon   />
               </IconButton>
-              <IconButton  className={classes.iconButton} aria-label="directions">
-              <ImageIcon/>
-              </IconButton>
+              
             </Paper> }
         </Paper>
 </div>

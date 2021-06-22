@@ -43,42 +43,25 @@ function Index(props) {
 
     return (
         <div>
-            <React.StrictMode>
+            
             <Card className="Commentroot" variant="outlined">
+              <Avatar>
+                {comment?comment.name[0]:null}
+              </Avatar>
                 <CardContent>
                 
-        
+        {comment?comment.commentaire:null}
                 </CardContent>
                 <CardActions>
-                    <IconButton aria-label="like">
+                   { /**<IconButton aria-label="like">
                         <ThumbUpIcon  />
                     </IconButton>
-                    <IconButton onClick={handleExpandClick}>
-                        <ReplyIcon fontSize="large"/>
-                    </IconButton>
+    */ }
                     
                 </CardActions>
     </Card>
-    <Collapse in={expanded} unmountOnExit>
-    <div className="reply">
-    <Paper component="form"  className={classes.root2}>
-      
-      <Avatar aria-label="recipe" className={classes.avatar}>
-          R
-      </Avatar>
-    
-      <InputBase
-        className={classes.input}
-        placeholder="Reply..."
-        autoFocus={true}
-      />
-    </Paper>
-    
-   
-        {Comment}
-    </div>
-        </Collapse>
-        </React.StrictMode>
+
+        
         </div>
     )
 }

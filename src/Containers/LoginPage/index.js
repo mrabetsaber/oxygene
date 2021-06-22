@@ -5,6 +5,12 @@ import NavBar from '../../Component/Navbar'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import './style.css'
+import { useDispatch, useSelector } from 'react-redux';
+import Signin from '../SigninPage';
+import { Redirect } from 'react-router';
+import { signin, isLoggedinUser } from '../../Actions/auth.action';
+import { NavLink } from 'react-router-dom';
+import Alert from '@material-ui/lab/Alert';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,6 +38,10 @@ export default function SimplePaper() {
   const classes = useStyles();
   const [email,setemail]=useState('')
   const [password,setpassword]=useState('')
+  const dispatch = useDispatch();
+  const auth = useSelector(state=>state.auth)
+ console.log(auth);
+  
   
   
   
@@ -45,12 +55,26 @@ export default function SimplePaper() {
       alert("password is required");
       return;
     }
+    dispatch(signin({email,password}))
+    
    }
+   if(auth.authenticated){
+    return <Redirect to={'/home'} />
+  
+  }
+  
+   
   return (
+    
       <div className="class">
+        
         <NavBar/>
         <div className={classes.root}>
           <Paper elevation={3} >
+            
+          { auth.error?<Alert severity="error">{auth.error}</Alert>:null}
+
+          
             <form onSubmit={userLogin}>
               <div className="container">
                 <h3>Login</h3>

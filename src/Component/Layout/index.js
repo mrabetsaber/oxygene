@@ -16,7 +16,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CardHeader from '@material-ui/core/CardHeader';
 import { useSelector, useDispatch } from 'react-redux'
-import { addPublication,getPublication} from '../../Actions/user.action';
+import { updatePublication,getPublication} from '../../Actions/user.action';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -115,18 +115,19 @@ const useStyles = makeStyles((theme) => ({
     }));
 function Index(props) {
   
-
+  const data = props.data
     const classes=useStyles();
     const [visabal,setvisabal]=useState(false);
-    const [videoUrl,setVideoUrl]=useState('');
+    const [videoUrl,setVideoUrl]=useState(data[3]);
     const [vid,setVideo]=useState('')
     const [image,setImg]=useState('');
-    const [imageUrl,setImgUrl]=useState('');
+  
+    const [imageUrl,setImgUrl]=useState(data[3]);
     const auth =useSelector(state=>state.auth);
-    const publication = useSelector(state=>console.log(state))
     
+   
     const dispatch = useDispatch()
-    const[text,setText]=useState('')
+    const[text,setText]=useState(data[1])
     
     const handleVisbalClick = ()=>{
      
@@ -159,45 +160,50 @@ function Index(props) {
   
     const handleClose = () => {
       setOpen(false);
-      
-      if(open){
-        setImg('')
-        setVideo('')
-        setImgUrl('');
-        setVideoUrl('');
-    }
-    console.log(image);
+      props.onUpdate(open)
+     
+    
     };
     
-    const addPub = ()=>{
+    const updatePub = ()=>{
      const publication={
        
           name:auth.firstName,
-          userId:auth.uid,
           text ,
           createdAt :new Date().toLocaleTimeString(),
-          url:'',
-          sort:new Date().toString(),
+          url:''
 
 
       }
-      dispatch(addPublication(publication,image));
+      dispatch(updatePublication(props.id,publication,vid));
       setText('')
       dispatch(getPublication())
-      handleClose()
       
+    }
+    
+    const suppImge=()=>{
+      setImg('')
+      setImgUrl('')
+      setVideo('')
+      setVideoUrl('')
+      if(open){
+        setImg(data[3])
+        setImgUrl(data[3])
+        setVideo(data[3])
+        setVideoUrl(data[3])
+      }
     }
     return (
         <div >
            <div>
      
       <Dialog
-        open={open}
+        open={open||props.open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title" style={{textAlign:'center'}}>{"Create your Post"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title" style={{textAlign:'center'}}>{"Update "}</DialogTitle>
         <DialogContent className={classes.publier}>
         
                     <CardHeader
@@ -214,7 +220,9 @@ function Index(props) {
                     <img height="200"  src={imageUrl} className={classes.video} alt="" />
                     <video height="200"  src={videoUrl} className={classes.video}></video>
                     </div>
-                    
+                   { image||imageUrl||vid||videoUrl?<Button onClick={ suppImge } variant="contained" style={{width:'100%'}} color="secondry">
+          delete image
+        </Button>:null}
                     <InputBase
                         className={classes.PublicationInput}
                         placeholder="Que Voulez-vous dire "
@@ -243,55 +251,15 @@ function Index(props) {
                 </label>  
         </DialogContent>
         <DialogActions>
-        <Button onClick={ addPub  } variant="contained" style={{width:'100%'}} color="primary">
-          Post
+        <Button onClick={ updatePub  } variant="contained" style={{width:'100%'}} color="primary">
+          Update
         </Button>
-        <Button onClick={ handleClose } variant="contained" style={{width:'100%'}} color="secondary">
+        <Button onClick={ handleClose } variant="contained" style={{width:'100%'}} color="secondry">
           Cancel
         </Button>
-                  
         </DialogActions>
       </Dialog>
     </div>
-          
-
-            <Paper component="form"   className={clsx(classes.root, {
-            [classes.rootClicked]: visabal,})} >
-
-                <div className={classes.root1}>
-                    <Avatar aria-label="recipe" className={classes.avatar}>
-                            {auth.firstName[0]}
-                    </Avatar>
-    
-                    <InputBase
-                        className={classes.input}
-                        placeholder="Comment..."
-                        onClick={handleClickOpen}
-                        
-                    />
-                </div>
-                <label htmlFor="img" className={classes.icon1}>
-                
-                    <PhotoLibraryIcon  color="primary"/>
-                    Picture
-                    
-                    <input type="file" id="img" hidden
-                     onChange={(e)=>{handelImg( e.target.files[0]);handleVisbalClick();e.target.value=null } }
-                     />
-         
-                </label>
-                    <label htmlFor="video" className={classes.icon1}>
-                        <YouTubeIcon color="secondary"/>
-                            Video
-                           
-                        <input type="file" id="video" hidden
-                         onChange={(e)=>{handelvideo((e.target.files[0]));handleVisbalClick();e.target.value=null}} 
-                         />
-                    </label>                
-            </Paper>
-            
-          </div>
-    )
+          </div>)
 }
-
 export default Index

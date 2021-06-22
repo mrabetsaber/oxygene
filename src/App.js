@@ -4,19 +4,23 @@ import LoginPage from './Containers/LoginPage';
 import SigninPage from './Containers/SigninPage'
 import {BrowserRouter as Router, Route } from 'react-router-dom';
 import Home from './Containers/Home'
-import Messages from './Containers/Messages'
-
+import Messages from './Containers/Messages';
+import Counter from './Containers/Counter'
+import PrivateRoute from './Component/PrivateRoute';
+import Admin from './Containers/Admin'
 
 function App() {
   return (
     <div className="App">
       
     <Router>
-    <Route path="/home" component={FirstPage} />
+      <PrivateRoute path="/counter"></PrivateRoute>
+    <Route path="/"exact component={FirstPage} />
     <Route path="/login" component={LoginPage} />
     <Route path="/Signin" component={SigninPage} />
-    <Route path="/" exact component={Home} />
-    <Route path="/Messages" component={Messages}/>
+    <PrivateRoute path="/home"  component={Home} />
+    <PrivateRoute path="/Messages" component={Messages}/>
+    <Route path="/admin" component={Admin}/>
     </Router>
       
     </div>

@@ -16,7 +16,51 @@ import CommentIcon from '@material-ui/icons/Comment';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import Commentaire from '../Commentaire'
+import { useSelector, useDispatch } from 'react-redux'
+import { addCommantaire, getCommantaire,deletePublication, getPublication } from '../../Actions';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import { withStyles } from '@material-ui/core/styles';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UpdateIcon from '@material-ui/icons/Update';
+import Update from '../../Component/Layout'
 
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
+));
+
+const StyledMenuItem = withStyles((theme) => ({
+  root: {
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+}))(MenuItem);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,44 +96,112 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     flex: 1,
   },
+  media2:{
+    height: '200px',
+    width: '100px',
+  }
 }));
 
  function RecipeReviewCard(props) {
    const data = props.data
+   const id = props.id
+   const userId=props.userId;
+   const time=data[2]
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [commentaire,setCommentaire]=useState('')
+  const auth =useSelector(state=>state.auth);
+  console.log(userId,auth.uid);
+  const user=useSelector(state=>state.user)
+  const dispatch = useDispatch()
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const [open, setOpen] = React.useState(false);
   const handleExpandClick = () => {
     setExpanded(!expanded);
+    dispatch(getCommantaire())
+
   };
   const comment = (e)=>{
       e.preventDefault()
+      const Commantaire={
+       pubId:id,
+        name:auth.firstName,
+        commentaire ,
+        createdAt :new Date().toLocaleTimeString(),
+        
+        }
+      dispatch(addCommantaire(Commantaire));
+
+      setCommentaire('')
+      dispatch(getCommantaire())
      
   }
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const deletePub=()=>{
+    dispatch(deletePublication(id))
+    dispatch(getPublication())
+
+  }
+  
 
   return (
-    <div ref={React.createRef()}>
+    <div >
+                  <Update data={data} open={open} id={id} onUpdate={val=>setOpen(val)}></Update>
+
     <Card className={classes.root}>
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            {data[0][0]}
+                <Avatar aria-label="recipe" className={classes.avatar}>
+            {data[0]?data[0][0]:null}
           </Avatar>
         }
+
+        action={
+         auth.uid===userId? <IconButton aria-label="settings" onClick={handleClick}>
+            <MoreVertIcon />
+          </IconButton>
+        :null}
         
         title={data[0]}
-        subheader="September 14, 2016"
+        subheader={time}
       />
-      <CardMedia
-        className={classes.media}
-        image="/images/firstPageImg.jpg"
-        title="Paella dish"
-      />
+       <StyledMenu
+        id="customized-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <StyledMenuItem onClick={deletePub}>
+          <ListItemIcon>
+            <DeleteIcon ></DeleteIcon>
+          </ListItemIcon>
+          <ListItemText primary="delete"  />
+        </StyledMenuItem>
+        <StyledMenuItem onClick={()=>{setOpen(true) ;props.onUpdate(open)}}>
+          <ListItemIcon >
+            <UpdateIcon/>
+          </ListItemIcon>
+          <ListItemText primary="update" />
+        </StyledMenuItem>
+        <StyledMenuItem>
+          
+        </StyledMenuItem>
+      </StyledMenu>
+      
       <CardContent>
+        {data[3]? <img className={classes.media2} src={data[3]}  />:null}
+        {data[3]?<video className={classes.media2} src={data[3]}></video>:null}
         <Typography variant="body2" color="textSecondary" component="p">
-          This impressive paella is a perfect party dish and a fun meal to cook together with your
-          guests. Add 1 cup of frozen peas along with the mussels, if you like.
+          {data[1]}
+          
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -110,6 +222,8 @@ const useStyles = makeStyles((theme) => ({
         </IconButton>
         
         
+        
+        
       
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -120,7 +234,7 @@ const useStyles = makeStyles((theme) => ({
           <Paper component="form" onSubmit={comment} className={classes.root1}>
       
             <Avatar aria-label="recipe" className={classes.avatar}>
-                R
+                {data[0][0]}
             </Avatar>
           
             <InputBase
@@ -130,9 +244,29 @@ const useStyles = makeStyles((theme) => ({
               value={commentaire}
               autoFocus={true}
             />
+                
           </Paper>
-         <Commentaire reply={<Commentaire/>} comment={data[2]}></Commentaire>
-        </CardContent>
+         
+          {user.commantaire?
+                
+                user.commantaire.map((data,index)=>{
+                  console.log('data',data);
+                  
+                     
+                    if(data.pubId==id){
+                   return <Commentaire
+                     comment={data} key={index} >
+                   </Commentaire>
+                    }
+               
+           
+               }):null
+             }
+                
+                   
+                
+                   
+          </CardContent>
       </Collapse>
     </Card>
     </div>
