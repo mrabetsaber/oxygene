@@ -9,7 +9,8 @@ const intialstate={
     authenticating:false,
     authenticated:false,
     isOnline:false,
-    error:null
+    error:null,
+    serror:null
 }
 
 
@@ -46,6 +47,16 @@ export default (state=intialstate,action)=>{
             state ={
                 ...state,
                 error:action.payload.error,
+                authenticated:false,
+                authenticating:false
+            }
+
+            break;
+        case`${authCaonstant.USER_LOGIN}_SFAILURE`:
+
+            state ={
+                ...state,
+                serror:action.payload.serror,
                 authenticated:false,
                 authenticating:false
             }

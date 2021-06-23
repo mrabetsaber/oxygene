@@ -4,7 +4,8 @@ const intialsatate={
     users:[],
     conversations:[],
     publication:[],
-    commantaire:[]
+    commantaire:[],
+    likes:[]
 }
 
 
@@ -40,6 +41,7 @@ export default (state = intialsatate,action)=>{
                 
 
             }
+            break;
             
         case "add":
             state= {
@@ -51,12 +53,20 @@ export default (state = intialsatate,action)=>{
                 
 
             }
+            break;
+        case "like":
+                state={
+                    ...state,
+                    likes:action.payload.likes
+                }
+                break;
 
         case "getCommantaire":
             state={
                 ...state,
                 commantaire:action.payload.commantaire
             }
+            break;
             
     }
     return state;

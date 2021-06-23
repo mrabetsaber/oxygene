@@ -151,19 +151,25 @@ function Index(props) {
         setVideo(vid)
         setVideoUrl(vidUrl);
     }
-    const [open, setOpen] = React.useState(false);
-    
-    const handleClickOpen = () => {
-      setOpen(true);
-      
-    };
-  
+    const [open, setOpen] = React.useState(false); 
     const handleClose = () => {
       setOpen(false);
       props.onUpdate(open)
      
     
     };
+    useEffect(()=>{ 
+
+      let unsubscribe= dispatch(getPublication())
+        .then((unsubscribe) => {
+          return unsubscribe;
+          
+          
+        })
+        .catch(error=>{
+          console.log(error);
+          
+        }) },[])
     
     const updatePub = ()=>{
      const publication={
@@ -176,8 +182,10 @@ function Index(props) {
 
       }
       dispatch(updatePublication(props.id,publication,vid));
-      setText('')
+      setOpen(false);
       dispatch(getPublication())
+      
+      props.onUpdate(open)
       
     }
     
@@ -251,10 +259,10 @@ function Index(props) {
                 </label>  
         </DialogContent>
         <DialogActions>
-        <Button onClick={ updatePub  } variant="contained" style={{width:'100%'}} color="primary">
+        <Button disabled ={text===''&&imageUrl===''&&videoUrl===""} onClick={ updatePub  } variant="contained" style={{width:'100%'}} color="primary">
           Update
         </Button>
-        <Button onClick={ handleClose } variant="contained" style={{width:'100%'}} color="secondry">
+        <Button onClick={ handleClose } variant="contained" style={{width:'100%'}} color="secondary">
           Cancel
         </Button>
         </DialogActions>

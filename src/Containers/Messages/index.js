@@ -20,15 +20,18 @@ const User =(props)=>{
   const {user,onClick}=props
   const classes=useStyles()
   
-  return(
+  return(<div>
     <Button onClick={()=>onClick(user)} className={classes.person}>
         <Avatar aria-label="recipe" >
                 {user?user.firstName[0]:null}
             </Avatar>
            <p> {user?user.firstName:null }  {user?user.lastName:null}</p>
-            <br/>
+           <br/>
+           
+            
     </Button>
- 
+    
+    </div>
     
   )
 }
@@ -206,6 +209,9 @@ export default function CustomizedInputBase() {
       dispatch(updateMessage(msgobj))
       .then(()=>{
         setMessage('')
+        console.log('uid_1:',auth.uid,'uid_2:',user.uid);
+       /**  dispatch(getRealTimeConversation({uid_1:auth.uid,uid_2:user.uid}) )
+*/
       })
     }
 
@@ -221,7 +227,7 @@ export default function CustomizedInputBase() {
   const filter=(e)=>{
      
       setSusers(users.map(user=>{
-        if(user.firstName.includes(e.target.value))
+        if(user.firstName.toLowerCase().includes(e.target.value.toLowerCase())||user.lastName.toLowerCase().includes(e.target.value.toLowerCase())||user.email.toLowerCase().includes(e.target.value.toLowerCase()))
           return user
         
         
@@ -327,7 +333,7 @@ Susers?Susers.map((user,index)=>{
                   if(userUid==data.user_uid_2&&data.user_uid_1==auth.uid){
                       
 
-                    return <p className={classes.myMessage} style={{ backgroundColor:"#eee",borderRadius:40,}}>{data.messsage}</p>
+                    return <p key={index} className={classes.myMessage} style={{ backgroundColor:"#eee",borderRadius:40,}}>{data.messsage}</p>
                     
                     }
                   else if(data.user_uid_2==auth.uid&&data.user_uid_1==userUid){

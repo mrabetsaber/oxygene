@@ -184,6 +184,7 @@ function Index(props) {
       dispatch(addPublication(publication,image));
       setText('')
       dispatch(getPublication())
+      props.onUpdate()
       handleClose()
       
     }
@@ -243,7 +244,7 @@ function Index(props) {
                 </label>  
         </DialogContent>
         <DialogActions>
-        <Button onClick={ addPub  } variant="contained" style={{width:'100%'}} color="primary">
+        <Button  disabled ={text===''&&imageUrl===''&&videoUrl===""} onClick={ addPub  } variant="contained" style={{width:'100%'}} color="primary">
           Post
         </Button>
         <Button onClick={ handleClose } variant="contained" style={{width:'100%'}} color="secondary">
@@ -265,9 +266,10 @@ function Index(props) {
     
                     <InputBase
                         className={classes.input}
-                        placeholder="Comment..."
+                        placeholder="create your post"
                         onClick={handleClickOpen}
-                        
+                        onChange={(e)=>{setText(e.target.value);handleClickOpen()}}
+                        value={text}
                     />
                 </div>
                 <label htmlFor="img" className={classes.icon1}>

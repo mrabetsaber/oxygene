@@ -83,7 +83,7 @@ export default function Signin() {
         <NavBar/>
         <div className={classes.root}>
           <Paper elevation={3} >
-         { auth.error?<Alert severity="error">{auth.error.message}</Alert>:null}
+         { auth.serror?<Alert severity="error">{auth.serror.message}</Alert>:null}
             <p></p>
             <form onSubmit={userLogin}>
               <div className="Signincontainer">

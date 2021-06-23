@@ -50,8 +50,8 @@ export default function SearchAppBar() {
  </div>:null }
  { auth.authenticated?<div>
   <NavLink style={{textDecoration:'none',color:'white', fontWeight:'bolder',marginRight:20}} to={'/messages'}>messages</NavLink>
-  <NavLink style={{textDecoration:'none',color:'white', fontWeight:'bolder',marginRight:20}} to={'/admin'}>Admin</NavLink>
-  <NavLink style={{textDecoration:'none',color:'white', fontWeight:'bolder'}} to={'/'} onClick={()=>{
+{ auth.email==="mrabetsaber31@gmail.com"? <NavLink style={{textDecoration:'none',color:'white', fontWeight:'bolder',marginRight:20}} to={'/admin'}>Admin</NavLink>
+:null}  <NavLink style={{textDecoration:'none',color:'white', fontWeight:'bolder'}} to={'/'} onClick={()=>{
                   dispatch(Logout(auth.uid))
                 }}>Logout</NavLink>
   

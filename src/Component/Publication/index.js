@@ -1,8 +1,8 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
+
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
@@ -17,19 +17,111 @@ import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import Commentaire from '../Commentaire'
 import { useSelector, useDispatch } from 'react-redux'
-import { addCommantaire, getCommantaire,deletePublication, getPublication } from '../../Actions';
+import { addCommantaire, getCommantaire,deletePublication, getPublication, addlike, getLike, deleteLike, addPublication, getRealtimeuser } from '../../Actions';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
+
 import { withStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Update';
 import Update from '../../Component/Layout'
+
+
+
+
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles';
+import { Divider } from '@material-ui/core';
+
+ function ResponsiveDialog(props) {
+  const [open, setOpen] = React.useState(false);
+
+  const dispatch = useDispatch()
+  const publication= useSelector(state=>state.user.publication);
+  const user =useSelector(state=>state.user)
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const id = props.id
+  const url= props.url
+  
+  const handleClickOpen = () => {
+    setOpen(true);
+    props.onChange(null)
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const deletePub=(id)=>{
+    
+    dispatch(deletePublication(id,url))
+    
+    setOpen(false);
+   
+  
+  
+props.onAgree(true)
+  }
+  
+    
+  
+
+  return (
+    <div>
+      
+      <Button   onClick={handleClickOpen}>
+      <DeleteIcon></DeleteIcon> Delete
+      </Button>
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">{"Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+           Whene you agree this user will be anymore here
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleClose} color="primary">
+            Disagree
+          </Button>
+          <Button onClick={()=> deletePub(id)} color="primary" autoFocus>
+            Agree
+          </Button>
+          
+        </DialogActions>
+       
+      </Dialog>
+    </div>
+  );
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+
+
+ 
+
+
 
 const StyledMenu = withStyles({
   paper: {
@@ -107,21 +199,37 @@ const useStyles = makeStyles((theme) => ({
    const id = props.id
    const userId=props.userId;
    const time=data[2]
+   const [openA, setOpenA] = React.useState(false);
+   const likes= useSelector(state=>state.user.likes);
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [commentaire,setCommentaire]=useState('')
   const auth =useSelector(state=>state.auth);
-  console.log(userId,auth.uid);
+  
   const user=useSelector(state=>state.user)
   const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const [open, setOpen] = React.useState(false);
+  const [like, setLike] = React.useState(props.like);
+  const [likeId, setlikeid] = React.useState();
   const handleExpandClick = () => {
     setExpanded(!expanded);
     dispatch(getCommantaire())
 
   };
+  useEffect(()=>{ 
+    dispatch(getRealtimeuser())
+    likes.map(like=>{
+     
+      if(like.pubId===id&&like.userId===auth.uid){
+        setlikeid(like.id)
+        return setLike(like.isLiked);
+        
+      }
+      return false
+    })
+     },[])
   const comment = (e)=>{
       e.preventDefault()
       const Commantaire={
@@ -139,21 +247,75 @@ const useStyles = makeStyles((theme) => ({
   }
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+    
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const deletePub=()=>{
-    dispatch(deletePublication(id))
-    dispatch(getPublication())
+  console.log('data[4]',data[4]);
+  const handleClosea = (event, reason) => {
+    if (reason === 'clickaway') {
+      setOpenA(false);
+      dispatch(getPublication())
+      return;
+    }
 
-  }
+    setOpenA(false);
+    dispatch(getPublication())
+  };
   
+ const liked =()=>{
+   if(like){
+     dispatch(deleteLike(likeId))
+     dispatch(getLike())
+     setLike(false)
+     return;
+   }
+   const l={
+     userId:auth.uid,
+     pubId:id,
+     isLiked:true
+   }
+  dispatch(addlike(l))
+  dispatch(getLike())
+  likes.map(like=>{
+     
+    if(like.pubId===id||like.userId===auth.uid){
+      setlikeid(like.id)
+      return setLike(like.isLiked);
+      
+    }
+    return false
+  })
+ }
+ const call=(val)=>{
+  setOpen(val)
+  props.onUpdate()
+ }
+ const share=(id)=>{
+  const publication={
+       
+    name:auth.firstName,
+    userId:auth.uid,
+    text:data[1] ,
+    createdAt :new Date().toLocaleTimeString(),
+    url:data[3],
+    sort:new Date().toString(),
+    oldUser:userId
+
+
+}
+dispatch(addPublication(publication));
+
+dispatch(getPublication())
+ }
+ 
+ console.log("the function",like);
 
   return (
     <div >
-                  <Update data={data} open={open} id={id} onUpdate={val=>setOpen(val)}></Update>
+                  <Update data={data} open={open} id={id} onUpdate={val=>call(val)}></Update>
 
     <Card className={classes.root}>
       <CardHeader
@@ -172,6 +334,25 @@ const useStyles = makeStyles((theme) => ({
         title={data[0]}
         subheader={time}
       />
+      {data[4]?
+        user.users.map(user=>{
+          if(user.uid===data[4]){
+            return <div>
+              <Divider variant="fullWidth"></Divider>
+            <CardHeader
+            avatar={
+              <Avatar aria-label="recipe" className={classes.avatar}>
+                {user.firstName[0]}
+              </Avatar>
+            }
+            
+            title={user.firstName}
+            
+            />
+            </div>
+          }
+        })
+     :null }
        <StyledMenu
         id="customized-menu"
         anchorEl={anchorEl}
@@ -179,34 +360,28 @@ const useStyles = makeStyles((theme) => ({
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledMenuItem onClick={deletePub}>
-          <ListItemIcon>
-            <DeleteIcon ></DeleteIcon>
-          </ListItemIcon>
-          <ListItemText primary="delete"  />
-        </StyledMenuItem>
-        <StyledMenuItem onClick={()=>{setOpen(true) ;props.onUpdate(open)}}>
-          <ListItemIcon >
-            <UpdateIcon/>
-          </ListItemIcon>
-          <ListItemText primary="update" />
-        </StyledMenuItem>
         <StyledMenuItem>
-          
+        <ResponsiveDialog onChange={(val)=>setAnchorEl(val)} onAgree={(value)=>setOpenA(value)} id={id} url={data[3]}></ResponsiveDialog>
         </StyledMenuItem>
+        <StyledMenuItem onClick={()=>{setOpen(true) ;props.onUpdate(open);setAnchorEl(null)}}>
+          <Button><UpdateIcon/> Update </Button>
+        </StyledMenuItem>
+        
       </StyledMenu>
       
       <CardContent>
         {data[3]? <img className={classes.media2} src={data[3]}  />:null}
         {data[3]?<video className={classes.media2} src={data[3]}></video>:null}
-        <Typography variant="body2" color="textSecondary" component="p">
+        <h4>
+
           {data[1]}
+        </h4>
           
-        </Typography>
+      
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="like" className={classes.expand}>
-          <ThumbUpIcon  />
+        <IconButton onClick={liked} aria-label="like" className={classes.expand}>
+          <ThumbUpIcon color={like?"primary":''} />
         </IconButton>
         <IconButton
           className={classes.expand}
@@ -217,9 +392,9 @@ const useStyles = makeStyles((theme) => ({
         >
           <CommentIcon/>
         </IconButton>
-        <IconButton aria-label="share" className={classes.expand}>
+       {auth.uid!==userId? <IconButton onClick={share} aria-label="share" className={classes.expand}>
           <ShareIcon />
-        </IconButton>
+        </IconButton>:null}
         
         
         
@@ -269,6 +444,11 @@ const useStyles = makeStyles((theme) => ({
           </CardContent>
       </Collapse>
     </Card>
+    <Snackbar open={openA} autoHideDuration={6000} onClose={handleClosea}>
+        <Alert onClose={handleClosea}  severity="success">
+          your post is deleted successfully
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

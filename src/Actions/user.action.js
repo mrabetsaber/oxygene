@@ -52,7 +52,7 @@ export const getRealTimeConversation= (users)=>{
                 }
                 if(
                     (doc.data().user_uid_1==users.uid_2 && doc.data().user_uid_2===users.uid_1))
-                    { 
+                    { conversations.push(doc.data())
                         
                     }
                 })
@@ -95,8 +95,8 @@ export const getRealTimeConversation= (users)=>{
         }
     }
 export const addPublication=(p,image)=>{
-   console. log(image.name)
-    if(image!=''){
+   
+    if(image){
     return async dispatch=>{const uploadTask = storage.ref(`images/${image.name}`).put(image,image.type);
           uploadTask.on(
             "state_changed",
@@ -119,9 +119,11 @@ export const addPublication=(p,image)=>{
         else{
             return async dispatch=>{
                  firebase.firestore().collection('publication').add(p)
+                
+                }
             }
         }
-    }
+    
 
     export const updatePublication=(id,p,image)=>{
         console. log(image.name)
@@ -174,12 +176,15 @@ export const addPublication=(p,image)=>{
             })
         }
     }
-    export const deletePublication=(id)=>{
+
+    export const deletePublication=(id,url)=>{
         return async dispatch=>{
-            firebase.firestore().collection('publication').doc(id).delete()
+            if(url)
+{                storage.refFromURL(url).delete()
+}            firebase.firestore().collection('publication').doc(id).delete()
         }
     }
-        export const getPublication=()=>{
+export const getPublication=()=>{
             return async dispatch=>{
             firebase.firestore().collection('publication').orderBy('sort','desc').get().then(snapchot=>{
                 console.log(snapchot);
@@ -191,7 +196,8 @@ export const addPublication=(p,image)=>{
                         text:doc.data().text ,
                         createdAt :doc.data().createdAt,
                         url:doc.data().url,
-                        userId:doc.data().userId
+                        userId:doc.data().userId,
+                        oldUser:doc.data().oldUser
 
 
                     }
@@ -207,3 +213,42 @@ export const addPublication=(p,image)=>{
         
             }
         }
+export const addlike=(l)=>{
+
+    return async dispatch=>{
+        firebase.firestore().collection('likes').add(l).then(console.log('liked '))
+
+    }
+}
+export const deleteLike=(id)=>{
+
+    return async dispatch=>{
+        firebase.firestore().collection('likes').doc(id).delete();
+    }
+}
+export const getLike=()=>{
+    return async dispatch =>{
+        firebase.firestore().collection('likes').get().then(snapchot=>{
+            
+            const likes =[]
+            snapchot.forEach(doc=>{
+               let data={
+                    id:doc.id,
+                    pubId:doc.data().pubId,
+                    isLiked:doc.data().isLiked ,
+                    userId:doc.data().userId
+
+
+                }
+                
+                likes.push(data)
+            })
+            console.log(likes);
+            dispatch({type:"like",
+            payload:{likes}
+    
+    })
+        }).catch(error=>console.log(error))
+    
+        }
+    }

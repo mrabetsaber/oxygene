@@ -6,13 +6,13 @@ import { authCaonstant } from './constans';
 import "firebase/auth";
 import   'firebase/firestore'
 var firebaseConfig = {
-  apiKey: "AIzaSyAqBERurSD-zbZXbdMOwQaajai92pBhcgU",
-  authDomain: "oxygene-b7763.firebaseapp.com",
-  projectId: "oxygene-b7763",
-  storageBucket: "oxygene-b7763.appspot.com",
-  messagingSenderId: "400341398086",
-  appId: "1:400341398086:web:2c0c85d4bd484dc96c9047"
-};
+    apiKey: "AIzaSyCtit7s3ZnbaWFhfKnG9ioh1OGUb-byBUE",
+    authDomain: "oxygene-b057f.firebaseapp.com",
+    projectId: "oxygene-b057f",
+    storageBucket: "oxygene-b057f.appspot.com",
+    messagingSenderId: "728992500342",
+    appId: "1:728992500342:web:2107827d8c5a6f9a45ad57"
+  };
 
 
 firebase.initializeApp(firebaseConfig);
@@ -65,10 +65,10 @@ export const signup =(user) =>{
                             payload :{user :loggedinuser}
                         })
                     })
-                    .catch(error=>{
-                        console.log(error);
-                        dispatch({type:`${authCaonstant.USER_LOGIN}_FAILURE`,
-                    payload:{error}})
+                    .catch(serror=>{
+                        console.log(serror);
+                        dispatch({type:`${authCaonstant.USER_LOGIN}_SFAILURE`,
+                    payload:{serror}})
                         
                     })
 
